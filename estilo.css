@@ -96,3 +96,36 @@ form button {
 form button:hover {
     background: blue;
 }
+
+
+/* --- Estilos AÑADIDOS para el selector de estilo --- */
+.selector-estilo {
+    text-align: center;
+    margin-top: 1rem;
+}
+.selector-estilo label {
+    font-size: 0.9rem;
+}
+
+/* --- Estilos AÑADIDOS para la página de anuncios --- */
+.ordenar {
+    margin: 1.5rem 0;
+}
+
+.anuncio {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.anuncio h3 {
+    color: #5c67f2;
+    margin-bottom: 0.5rem;
+}
+
+.anuncio p {
+    font-size: 0.9rem;
+    color: #555;
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuncios</title>
+    <link rel="stylesheet" href="estilo.css" title="Predeterminado">
+    <link rel="alternate stylesheet" type="text/css" href="noche.css" title="Noche">
+</head>
+<body>
+    <header>
+        <h1>Mi Web</h1>
+        <p>Práctica Optativa de JS</p>
+        <nav>
+            <a href="registro.html">Registro</a>
+            <a href="index.html">Login</a>
+            <a href="anuncios.html">Anuncios</a>
+
+            <label for="selector-estilo">Estilo:</label>
+            <select id="selector-estilo">
+                <option value="Predeterminado">Predeterminado</option>
+                <option value="Noche">Noche</option>
+            </select>
+        </nav>
+    </header>
+
+    <main>
+        <section id="anuncios">
+            <h2>Listado de Anuncios</h2>
+
+            <section id="ordenar">
+                <label for="selector-orden">Ordenar por:</label>
+                <select id="selector-orden">
+                    <option value="titulo-asc">Título (A-Z)</option>
+                    <option value="titulo-desc">Título (Z-A)</option>
+                    <option value="precio-asc">Precio (Más barato)</option>
+                    <option value="precio-desc">Precio (Más caro)</option>
+                    <option value="fecha-asc">Fecha (Más antiguos)</option>
+                    <option value="fecha-desc">Fecha (Más nuevos)</option>
+                </select>
+            </section>
+            
+            <section id="lista-anuncios">
+                <article data-titulo="Portátil Gaming" data-precio="1000" data-fecha="2025-11-17">
+                    <h3>Portátil Gaming</h3>
+                    <p>Precio: 1000€</p>
+                    <p>Fecha: 17/11/2025</p>
+                </article>
+                <article data-titulo="Bicicleta de Montaña" data-precio="350" data-fecha="2025-10-20">
+                    <h3>Bicicleta de Montaña</h3>
+                    <p>Precio: 350€</p>
+                    <p>Fecha: 20/10/2025</p>
+                </article>
+                <article data-titulo="Sofá 3 Plazas" data-precio="420" data-fecha="2025-09-15">
+                    <h3>Sofá 3 Plazas</h3>
+                    <p>Precio: 420€</p>
+                    <p>Fecha: 15/09/2025</p>
+                </article>
+                <article data-titulo="Mesa de Comedor" data-precio="150" data-fecha="2025-11-05">
+                    <h3>Mesa de Comedor</h3>
+                    <p>Precio: 150€</p>
+                    <p>Fecha: 05/11/2025</p>
+                </article>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        © Leigh Garett Grupo 3 de Prácticas
+    </footer>
+    <script src="codigo.js"></script>
+</body>
+</html>

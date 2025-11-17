@@ -1,0 +1,55 @@
+@import url('estilo.css');
+
+body {
+    background-color: black;
+    color: gray;
+}
+
+/* --- Estructura --- */
+header {
+    background: darkgray;
+    color: black;
+}
+
+nav a {
+    color: black;
+}
+
+main {
+    background: black;
+    box-shadow: 0 2px 5px darkgray;
+}
+
+footer {
+    background: darkgray;
+    color: black;
+}
+
+/* --- Formulario --- */
+form input[type="text"],
+form input[type="password"] {
+    border: 1px solid black;
+}
+
+form button {
+    background: darkslateblue;
+    color: black;
+}
+
+form button:hover {
+    background: darkblue;
+}
+
+/* --- Estilos AÑADIDOS para la página de anuncios --- */
+.anuncio {
+    background: black;
+    border: 1px solid black;
+}
+
+.anuncio h3 {
+    color: darkslateblue;
+}
+
+.anuncio p {
+    color: gray;
+}
