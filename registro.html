@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Registro</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -17,14 +17,20 @@
     </header>
 
     <main>
-        <section id="login">
+        <section id="registro">
             <form action="index.html" method="post">
-                <h2>Iniciar sesión</h2>
+                <h2>Registrar nuevo usuario</h2>
                 <label for="usuario">Usuario</label>
                 <input type="text" id="usuario" name="usuario">
                     
                 <label for="pwd">Contraseña</label>
                 <input type="password" id="pwd" name="pwd">
+
+                <label for="pwd2">Repetir Contraseña</label>
+                <input type="password" id="pwd2" name="pwd2">
+
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email">
 
                 <button type="submit">Confirmar</button>
             </form>

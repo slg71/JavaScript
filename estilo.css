@@ -1,0 +1,98 @@
+/* --- Reset básico --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    line-height: 1.6;
+}
+
+/* --- Estructura --- */
+header {
+    background: black;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 0.25rem;
+}
+
+nav {
+    margin-top: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0 0.5rem;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    /* Centra la sección de formulario */
+    max-width: 500px;
+    margin: 2rem auto; /* 2rem arriba/abajo, auto a los lados */
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px black;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: black;
+    color: white;
+    margin-top: 2rem;
+}
+
+/* --- Formulario --- */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+form label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%; /* Ocupa todo el ancho del 'main' */
+}
+
+form button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background: cornflowerblue;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+form button:hover {
+    background: blue;
+}
