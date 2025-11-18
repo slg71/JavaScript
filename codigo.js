@@ -1,271 +1,403 @@
-function $(selector) {
-    return document.querySelector(selector);
+// Función para no escribir document.getElementById todo el rato
+function dameElemento(id) {
+    return document.getElementById(id);
 }
 
-// --- Funciones de Ayuda ---
+// --- FUNCIONES DE AYUDA PARA ERRORES ---
 
-function setError(selector) {
-    $(selector).style.border = "2px solid red";
-}
-
-function clearError(selector) {
-    $(selector).style.border = "";
-}
-
-// "...selectores" pa varios campos a la vez
-function resetCampos(...selectores) {
-    for (const selector of selectores) {
-        clearError(selector);
+// Pone el borde rojo y escribe el texto en el span que hay debajo
+function mostrarError(idElemento, textoError) {
+    var elemento = dameElemento(idElemento);
+    if (elemento) {
+        elemento.style.border = "2px solid red";
+    }
+    
+    // Busco el hueco del error concatenando "error-" con el ID
+    var spanError = dameElemento("error-" + idElemento);
+    if (spanError) {
+        spanError.innerHTML = textoError;
     }
 }
 
-function finalizarValidacion(event, valido, mensaje, mensajeExito) {
-    if (!valido) {
-        alert("Por favor, corrige los siguientes errores:\n\n" + mensaje);
-        event.preventDefault(); //pa no enviarlo
+// Limpia lo rojo y borra el texto
+function limpiarError(idElemento) {
+    var elemento = dameElemento(idElemento);
+    if (elemento) {
+        elemento.style.border = ""; // Quita el estilo inline
+    }
+    
+    var spanError = dameElemento("error-" + idElemento);
+    if (spanError) {
+        spanError.innerHTML = "";
+    }
+}
+
+/* ==============================================================
+   CARGA DE LA PÁGINA (window.onload)
+   ============================================================== */
+window.onload = function() {
+    // 1. Mirar si hay que sacar el aviso de cookies
+    gestionarBannerCookies();
+
+    // 2. Preparar formularios si existen
+    var formLogin = dameElemento("form-login");
+    if (formLogin) formLogin.onsubmit = validarLogin;
+
+    var formRegistro = dameElemento("form-registro");
+    if (formRegistro) formRegistro.onsubmit = validarRegistro;
+
+    // 3. Selector de estilo (para cambiarlo al vuelo)
+    var selector = dameElemento("selector-estilo");
+    if (selector) {
+        selector.onchange = function() {
+            cambiarEstilo(this.value);
+        };
+    }
+
+    // 4. Selector de ordenar anuncios
+    var selectorOrden = dameElemento("selector-orden");
+    if (selectorOrden) selectorOrden.onchange = ordenarAnuncios;
+
+    // 5. RECUPERAR ESTILO GUARDADO (Aquí estaba el fallo antes)
+    var aceptadas = getCookie('aceptar-cookies');
+    if (aceptadas == 'si') {
+        var estiloGuardado = getCookie('estilo-guardado');
+        
+        // Si la cookie está vacía o es rara, pongo Predeterminado para que no se rompa
+        if (estiloGuardado == "" || estiloGuardado == null) {
+            estiloGuardado = "Predeterminado";
+        }
+        
+        // Aplico el estilo
+        cambiarEstilo(estiloGuardado);
+
+        // Actualizo el selector para que coincida con lo que se ve
+        if (selector) {
+            selector.value = estiloGuardado;
+        }
+    }
+};
+
+/* ==============================================================
+   LÓGICA DE ESTILOS (ARREGLADA)
+   ============================================================== */
+
+function cambiarEstilo(tituloEstilo) {
+    var links = document.getElementsByTagName("link");
+    var encontrado = false;
+
+    // APAÑO DE SEGURIDAD: 
+    // Primero miro si el estilo que me piden existe de verdad.
+    // Si no existe, fuerzo que sea "Predeterminado" para no quedarme sin CSS.
+    for (var i = 0; i < links.length; i++) {
+        if (links[i].getAttribute("title") == tituloEstilo) {
+            encontrado = true;
+            break; 
+        }
+    }
+    if (encontrado == false) {
+        tituloEstilo = "Predeterminado";
+    }
+
+    // Ahora sí, activo el correcto y desactivo el resto
+    for (var i = 0; i < links.length; i++) {
+        var unLink = links[i];
+        if (unLink.getAttribute("title")) {
+            if (unLink.getAttribute("title") == tituloEstilo) {
+                unLink.disabled = false; // Este es el bueno
+            } else {
+                unLink.disabled = true;  // Fuera los demás
+            }
+        }
+    }
+
+    // Si ya aceptó cookies, guardo el cambio para la próxima
+    if (getCookie('aceptar-cookies') == 'si') {
+        setCookie('estilo-guardado', tituloEstilo, 45);
+    }
+}
+
+/* ==============================================================
+   COOKIES Y AVISOS (SIN DIVS)
+   ============================================================== */
+
+function gestionarBannerCookies() {
+    var decision = getCookie('aceptar-cookies');
+    
+    if (decision == "") {
+        crearBanner();
+    }
+
+    // Botones de la página "Política de cookies"
+    // Los busco aquí para asignarles la función
+    var btnAceptar = dameElemento("btn-revertir-aceptar");
+    if (btnAceptar) {
+        btnAceptar.onclick = function() {
+            aceptarCookies();
+            location.reload(); // Recargo para aplicar cambios
+        };
+    }
+    
+    var btnRechazar = dameElemento("btn-revertir-rechazar");
+    if (btnRechazar) {
+        btnRechazar.onclick = function() {
+            rechazarCookies();
+            location.reload();
+        };
+    }
+}
+
+function crearBanner() {
+    // NO USO DIV, uso SECTION que es más semántico para el profe
+    var seccion = document.createElement("section");
+    seccion.id = "cookie-banner"; // El CSS ya tiene estilo para este ID
+    
+    var texto = document.createElement("span");
+    texto.innerHTML = "Esta web usa cookies propias. ¿Aceptas? ";
+    
+    var btnSi = document.createElement("button");
+    btnSi.innerHTML = "Aceptar";
+    btnSi.onclick = aceptarCookies;
+    
+    var btnNo = document.createElement("button");
+    btnNo.innerHTML = "Rechazar";
+    btnNo.onclick = rechazarCookies;
+    
+    seccion.appendChild(texto);
+    seccion.appendChild(btnSi);
+    seccion.appendChild(btnNo);
+    
+    document.body.appendChild(seccion);
+}
+
+function aceptarCookies() {
+    // 1. Guardar el SI
+    setCookie('aceptar-cookies', 'si', 90);
+    
+    // 2. Guardar el estilo que hay AHORA MISMO puesto.
+    // Si no encuentro el selector (raro), guardo Predeterminado por defecto.
+    var selector = dameElemento("selector-estilo");
+    var estiloAGuardar = "Predeterminado";
+    
+    if (selector) {
+        estiloAGuardar = selector.value;
+    }
+    
+    setCookie('estilo-guardado', estiloAGuardar, 45);
+
+    ocultarBanner();
+    mostrarAvisoFlotante("Has ACEPTADO las cookies. Se guarda tu estilo.");
+}
+
+function rechazarCookies() {
+    // Guardar el NO
+    setCookie('aceptar-cookies', 'no', 90);
+    // Borrar la cookie de estilo para que no se guarde nada
+    setCookie('estilo-guardado', "", -1);
+    
+    ocultarBanner();
+    mostrarAvisoFlotante("Has RECHAZADO las cookies.");
+}
+
+function ocultarBanner() {
+    var banner = dameElemento("cookie-banner");
+    if (banner) banner.style.display = "none";
+}
+
+function mostrarAvisoFlotante(mensaje) {
+    // NO USO DIV, uso ASIDE para mensajes flotantes (semántico)
+    var aviso = document.createElement("aside");
+    aviso.id = "mensaje-aviso"; // El CSS usa este ID
+    aviso.innerHTML = mensaje;
+    
+    document.body.appendChild(aviso);
+    aviso.style.display = "block";
+
+    // Que se quite solo a los 5 segundos
+    setTimeout(function() {
+        if (aviso.parentNode) {
+            aviso.parentNode.removeChild(aviso);
+        }
+    }, 5000);
+}
+
+/* ==============================================================
+   VALIDACIONES DE FORMULARIOS
+   ============================================================== */
+
+function validarLogin(evento) {
+    var hayFallos = false;
+    var usuario = dameElemento("usuario").value;
+    var pass = dameElemento("pwd").value;
+
+    limpiarError("usuario");
+    limpiarError("pwd");
+
+    // Regex simple para ver si solo hay espacios
+    if (/^\s*$/.test(usuario)) {
+        mostrarError("usuario", "El usuario es obligatorio.");
+        hayFallos = true;
+    }
+    if (/^\s*$/.test(pass)) {
+        mostrarError("pwd", "La contraseña es obligatoria.");
+        hayFallos = true;
+    }
+
+    if (hayFallos) return false; // No envía
+    else {
+        alert("Todo correcto. Iniciando sesión...");
+        return true;
+    }
+}
+
+function validarRegistro(evento) {
+    var hayFallos = false;
+    var usu = dameElemento("usuario").value;
+    var pass1 = dameElemento("pwd").value;
+    var pass2 = dameElemento("pwd2").value;
+    var email = dameElemento("email").value;
+
+    limpiarError("usuario"); limpiarError("pwd");
+    limpiarError("pwd2"); limpiarError("email");
+
+    // 1. Validar Usuario
+    var regexUsu = /^[a-zA-Z][a-zA-Z0-9]{2,14}$/;
+    if (regexUsu.test(usu) == false) {
+        mostrarError("usuario", "Mal usuario: Empieza con letra, 3-15 car., sin símbolos.");
+        hayFallos = true;
+    }
+
+    // 2. Validar Contraseña
+    var errorPass = false;
+    if (pass1.length < 6 || pass1.length > 15) errorPass = true;
+    if (/[A-Z]/.test(pass1) == false) errorPass = true; // Falta mayúscula
+    if (/[a-z]/.test(pass1) == false) errorPass = true; // Falta minúscula
+    if (/[0-9]/.test(pass1) == false) errorPass = true; // Falta número
+    if (/^[a-zA-Z0-9_-]+$/.test(pass1) == false) errorPass = true; // Caracteres raros
+
+    if (errorPass) {
+        mostrarError("pwd", "Contraseña débil: 6-15 car., mayus, minus, num y -_.");
+        hayFallos = true;
+    }
+
+    if (pass1 != pass2) {
+        mostrarError("pwd2", "Las contraseñas no son iguales.");
+        hayFallos = true;
+    }
+
+    // 3. Validar Email (Manual, sin type="email")
+    if (email == "") {
+        mostrarError("email", "Falta el email.");
+        hayFallos = true;
     } else {
-        alert(mensajeExito);
-    }
-}
-
-
-// --- Lógica Principal ---
-document.addEventListener("DOMContentLoaded", function() {
-    // Para la página de Login
-    const formLogin = $("#login form");
-    if (formLogin) {
-        formLogin.addEventListener("submit", validarLogin);
-    }
-
-    // Para la página de Registro
-    const formReg = $("#registro form");
-    if (formReg) {
-        formReg.addEventListener("submit", validarRegistro);
-    }
-
-    // Conectar el selector de estilo
-    var selectorEstilo = $("#selector-estilo");
-    if (selectorEstilo) {
-        // Cuando cambie el <select>, llamo a la función 'estilo'
-        selectorEstilo.addEventListener("change", function() {
-            // 'this.value' es el valor del <option> seleccionado
-            estilo(this.value); 
-        });
-    }
-
-    // --- Conectar el selector de orden ---
-    var selectorOrden = $("#selector-orden");
-    if (selectorOrden) {
-        // Cuando cambie el <select>, llamo a la función 'ordenarAnuncios'
-        selectorOrden.addEventListener("change", ordenarAnuncios);
-    }
-
-    // Al cargar la página, miro si hay una cookie guardada
-    var estiloGuardado = getCookie('estilo-guardado');
-    
-    if (estiloGuardado != "") { // Si hay algo guardado...
-        // 1. Aplico el estilo guardado
-        estilo(estiloGuardado);
-        
-        // 2. Actualizo el <select> para que muestre el estilo actual
-        if (selectorEstilo) {
-            selectorEstilo.value = estiloGuardado;
-        }
-    }
-});
-
-/*=================================VALIDACIÓN FORMULARIOS=================================*/
-function validarLogin(event) {
-    const noVacioRegex = /^\s*$/;
-    const usuario = $("#usuario").value;
-    const pwd = $("#pwd").value;
-    let valido = true;
-    let mensaje = "";
-    resetCampos("#usuario", "#pwd"); 
-    if (noVacioRegex.test(usuario)) {
-        mensaje += "- El campo 'Usuario' no puede estar vacío.\n";
-        setError("#usuario");
-        valido = false;
-    }
-    if (noVacioRegex.test(pwd)) {
-        mensaje += "- El campo 'Contraseña' no puede estar vacío.\n";
-        setError("#pwd");
-        valido = false;
-    }
-    finalizarValidacion(event, valido, mensaje, "Inicio de sesión correcto. Redirigiendo a Inicio...");
-}
-
-function validarRegistro(event) {
-    const usuario = $("#usuario").value;
-    const pwd = $("#pwd").value;
-    const pwd2 = $("#pwd2").value;
-    const email = $("#email").value;
-    let valido = true;
-    let mensaje = "";
-    resetCampos("#usuario", "#pwd", "#pwd2", "#email");
-    const usuarioRegex = /^[a-zA-Z][a-zA-Z0-9]{2,14}$/;
-    if (usuario === "") {
-        mensaje += "- El campo 'Usuario' no puede estar vacío.\n";
-        setError("#usuario");
-        valido = false;
-    } else if (!usuarioRegex.test(usuario)) {
-        mensaje += "- El 'Usuario' debe:\n";
-        mensaje += "  · Empezar con una letra.\n";
-        mensaje += "  · Contener solo letras inglesas y números.\n";
-        mensaje += "  · Tener entre 3 y 15 caracteres.\n";
-        setError("#usuario");
-        valido = false;
-    }
-    const pwdRegexCaracteres = /^[a-zA-Z0-9_-]{6,15}$/;
-    const pwdRegexMayus = /[A-Z]/;
-    const pwdRegexMinus = /[a-z]/;
-    const pwdRegexNum = /\d/;
-    let pwdValida = true;
-    if (pwd === "") {
-        mensaje += "- El campo 'Contraseña' no puede estar vacío.\n";
-        pwdValida = false;
-    } else {
-        if (!pwdRegexCaracteres.test(pwd)) {
-            mensaje += "- La 'Contraseña' debe tener entre 6 y 15 caracteres (solo letras, números, '-' o '_').\n";
-            pwdValida = false;
-        }
-        if (!pwdRegexMayus.test(pwd)) {
-            mensaje += "- La 'Contraseña' debe tener al menos una mayúscula.\n";
-            pwdValida = false;
-        }
-        if (!pwdRegexMinus.test(pwd)) {
-            mensaje += "- La 'Contraseña' debe tener al menos una minúscula.\n";
-            pwdValida = false;
-        }
-        if (!pwdRegexNum.test(pwd)) {
-            mensaje += "- La 'Contraseña' debe tener al menos un número.\n";
-            pwdValida = false;
-        }
-    }
-    if (!pwdValida) {
-        setError("#pwd");
-        valido = false;
-    }
-    if (pwd2 === "") {
-        mensaje += "- Debes repetir la contraseña.\n";
-        setError("#pwd2");
-        valido = false;
-    } else if (pwd !== pwd2) {
-        mensaje += "- Las contraseñas no coinciden.\n";
-        setError("#pwd2");
-        valido = false;
-    }
-    if (email === "") {
-        mensaje += "- El campo 'Dirección de email' no puede estar vacío.\n";
-        setError("#email");
-        valido = false;
-    } else if (email.length > 254) {
-        setError("#email");
-        valido = false;
-    }
-    finalizarValidacion(event, valido, mensaje, "Registro correcto. Redirigiendo a Inicio...");
-}
-
-
-/*=================================NUEVAS FUNCIONES (ESTILO Y ORDENAR)=================================*/
-
-//copiado del pdf
-function estilo(titulo) {
-    // 1. Pillo todas las etiquetas <link> del documento
-    var arrayLink = document.getElementsByTagName('link');
-    
-    // 2. Las recorro una por una
-    for(var i=0; i < arrayLink.length; i++) {
-        var link = arrayLink[i];
-        
-        // 3. Miro si la etiqueta es un 'stylesheet' y tiene 'title'
-        if (link.getAttribute('rel') && link.getAttribute('rel').includes('stylesheet') && link.getAttribute('title')) {
-            
-            // 4. Si tiene título, la activo o desactivo
-            // Si el título es el que he elegido, la activo (disabled = false)
-            // Si es otro, la desactivo (disabled = true)
-            link.disabled = (link.getAttribute('title') !== titulo);
-        }
-    }
-
-    setCookie('estilo-guardado', titulo, 45);
-}
-
-
-/*Función para ordenar los anuncios*/
-function ordenarAnuncios() {
-    
-    // 1. Pillo el <section> que contiene todos los anuncios
-    var contenedor = $("#lista-anuncios");
-    
-    // 2. Pillo todos los anuncios que están dentro
-    // querySelectorAll devuelve una "NodeList"
-    // 'Array.from()' lo convierte en un Array de verdad para poder usar .sort()
-    var anuncios = Array.from(contenedor.querySelectorAll('article'));
-    
-    // 3. Miro qué ha elegido el usuario en el <select> de ordenar
-    var valor = $("#selector-orden").value;
-    
-    // 4. Separo el valor en "criterio" y "orden"
-    var partes = valor.split('-'); // ["precio", "asc"]
-    var criterio = partes[0]; // "precio"
-    var orden = partes[1]; // "asc"
-
-    // 5. Ordeno el Array
-    anuncios.sort(function(a, b) {
-        // Pillo el valor de los 'data-attributes'
-        var valA = a.dataset[criterio]; 
-        var valB = b.dataset[criterio];
-
-        // Preparo la comparación
-        var comparacion = 0;
-        
-        if (criterio === 'precio') {
-            // Si es 'precio', lo convierto a número para comparar
-            comparacion = parseFloat(valA) - parseFloat(valB);
+        var partes = email.split("@");
+        if (partes.length != 2) {
+            mostrarError("email", "El email necesita una @.");
+            hayFallos = true;
         } else {
-            // Si es 'titulo' o 'fecha' (en YYYY-MM-DD),
-            // los comparo como texto
-            comparacion = valA.localeCompare(valB);
-        }
+            var local = partes[0];
+            var dominio = partes[1];
+            var emailMal = false;
+            var msg = "";
 
-        // Si el orden es 'desc', le doy la vuelta al resultado
-        if (orden === 'desc') {
-            comparacion = comparacion * -1; // invierto el número
+            // Validaciones parte local
+            if (local.length < 1 || local.length > 64) { emailMal = true; msg = "Usuario muy largo/corto."; }
+            // Regex caracteres permitidos
+            if (/^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~.]+$/.test(local) == false) { emailMal = true; msg = "Símbolos raros en usuario."; }
+            if (local.startsWith(".") || local.endsWith(".")) { emailMal = true; msg = "Punto al inicio/final."; }
+            if (local.indexOf("..") != -1) { emailMal = true; msg = "Dos puntos seguidos."; }
+
+            // Validaciones dominio
+            if (dominio.length > 255) { emailMal = true; msg = "Dominio larguísimo."; }
+            
+            // Subdominios
+            var subs = dominio.split(".");
+            for (var i = 0; i < subs.length; i++) {
+                var s = subs[i];
+                if (s.length < 1 || s.length > 63) { emailMal = true; msg = "Subdominio mal longitud."; }
+                if (/^[a-zA-Z0-9-]+$/.test(s) == false) { emailMal = true; msg = "Símbolos raros en dominio."; }
+                if (s.startsWith("-") || s.endsWith("-")) { emailMal = true; msg = "Guiones en los bordes."; }
+            }
+
+            if (email.length > 254) { emailMal = true; msg = "Email total demasiado largo."; }
+
+            if (emailMal) {
+                mostrarError("email", "Email inválido: " + msg);
+                hayFallos = true;
+            }
         }
-        
-        return comparacion;
+    }
+
+    if (hayFallos) return false;
+    else {
+        alert("Registro válido. Enviando datos...");
+        return true;
+    }
+}
+
+/* ==============================================================
+   ORDENAR ANUNCIOS (DOM BÁSICO)
+   ============================================================== */
+function ordenarAnuncios() {
+    var contenedor = dameElemento("lista-anuncios");
+    var selector = dameElemento("selector-orden");
+    var opcion = selector.value;
+
+    // Convierto la lista de nodos a array para poder usar .sort()
+    var anuncios = contenedor.getElementsByTagName("article");
+    var lista = [];
+    for(var i=0; i<anuncios.length; i++) {
+        lista.push(anuncios[i]);
+    }
+
+    var partes = opcion.split("-"); // Ej: "precio-asc"
+    var criterio = partes[0];
+    var orden = partes[1];
+
+    lista.sort(function(a, b) {
+        var datoA = a.getAttribute("data-" + criterio);
+        var datoB = b.getAttribute("data-" + criterio);
+
+        if (criterio == "precio") {
+            // Convertir a número para comparar bien
+            datoA = parseFloat(datoA);
+            datoB = parseFloat(datoB);
+            if (orden == "asc") return datoA - datoB;
+            else return datoB - datoA;
+        } else {
+            // Comparar texto
+            datoA = datoA.toLowerCase();
+            datoB = datoB.toLowerCase();
+            if (datoA < datoB) return (orden == "asc") ? -1 : 1;
+            else if (datoA > datoB) return (orden == "asc") ? 1 : -1;
+            else return 0;
+        }
     });
 
-    // 6. Vuelvo a meter los anuncios en el contenedor
-    [cite_start]// El PDF dice que hay que hacerlo "nodo a nodo"
-    // Al hacer 'appendChild' con un elemento que ya existe,
-    // JS es listo y lo mueve al final.
-    // Así que, si los muevo todos en orden, la lista se reordena
-    for (var i = 0; i < anuncios.length; i++) {
-        contenedor.appendChild(anuncios[i]);
+    // Reordenar en el HTML (appendChild mueve el elemento si ya existe)
+    for(var j=0; j<lista.length; j++) {
+        contenedor.appendChild(lista[j]);
     }
 }
 
-/*=================================NUEVAS FUNCIONES (COOKIES)=================================*/
-
-// Función para crear la cookie (copiada del PDF)
+/* ==============================================================
+   FUNCIONES COOKIES (COPIADAS DEL PDF)
+   ============================================================== */
 function setCookie(c_name, value, expiredays) {
     var exdate = new Date();
     exdate.setDate(exdate.getDate() + expiredays);
+    // Importante: path=/ para que funcione en toda la web
     document.cookie = c_name + "=" + escape(value) +
-        ((expiredays == null) ? "" : "; expires=" + exdate.toGMTString());
+        ((expiredays == null) ? "" : "; expires=" + exdate.toGMTString()) + "; path=/";
 }
 
-// Función para leer la cookie (copiada del PDF)
 function getCookie(c_name) {
     if (document.cookie.length > 0) {
         var c_start = document.cookie.indexOf(c_name + "=");
         if (c_start != -1) {
             c_start = c_start + c_name.length + 1;
             var c_end = document.cookie.indexOf(";", c_start);
-            if (c_end == -1)
-                c_end = document.cookie.length;
+            if (c_end == -1) c_end = document.cookie.length;
             return unescape(document.cookie.substring(c_start, c_end));
         }
     }

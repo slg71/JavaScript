@@ -1,55 +1,115 @@
+/* JS/noche.css */
 @import url('estilo.css');
 
+/* Sobreescribimos las variables y colores */
+
 body {
-    background-color: black;
-    color: gray;
+    background-color: #121212; /* Negro suave (Material Design standard) */
+    color: #e0e0e0; /* Blanco hueso para leer bien */
 }
 
 /* --- Estructura --- */
 header {
-    background: darkgray;
-    color: black;
+    background: #1f1f1f; /* Gris muy oscuro */
+    color: #ffffff;
+    border-bottom: 1px solid #333;
 }
 
 nav a {
-    color: black;
+    color: #bb86fc; /* Púrpura claro (color de acento típico oscuro) */
+}
+
+nav a:hover {
+    color: #ffffff;
 }
 
 main {
-    background: black;
-    box-shadow: 0 2px 5px darkgray;
+    background: #1e1e1e; /* Tarjeta gris oscura */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Sombra negra fuerte */
 }
 
 footer {
-    background: darkgray;
-    color: black;
+    background: #1f1f1f;
+    color: #888;
+    border-top: 1px solid #333;
+}
+
+footer a {
+    color: #bb86fc;
 }
 
 /* --- Formulario --- */
+form h2 {
+    color: #ffffff;
+}
+
+form label {
+    color: #b0b0b0;
+}
+
+/* Inputs: Fondo oscuro, borde visible, texto claro */
 form input[type="text"],
 form input[type="password"] {
-    border: 1px solid black;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    color: #ffffff;
+}
+
+form input:focus {
+    border-color: #bb86fc;
+    background-color: #333;
+    box-shadow: 0 0 5px rgba(187, 134, 252, 0.3);
+}
+
+/* Inputs con error en modo noche */
+input[style*="border: 2px solid red"] {
+    background-color: #3a1c1c; /* Fondo rojizo oscuro */
+    border-color: #cf6679 !important; /* Rojo pastel */
+    color: white;
+}
+
+/* Mensajes de error más claros */
+#error-usuario, #error-pwd, #error-pwd2, #error-email {
+    color: #cf6679;
 }
 
 form button {
-    background: darkslateblue;
-    color: black;
+    background: #bb86fc; /* Púrpura */
+    color: #000000; /* Texto negro para contraste sobre púrpura */
 }
 
 form button:hover {
-    background: darkblue;
+    background: #9965f4;
 }
 
-/* --- Estilos AÑADIDOS para la página de anuncios --- */
+/* --- Anuncios --- */
 .anuncio {
-    background: black;
-    border: 1px solid black;
+    background: #2c2c2c; /* Tarjeta diferenciada del fondo */
+    border: 1px solid #444; /* Borde gris visible */
 }
 
 .anuncio h3 {
-    color: darkslateblue;
+    color: #bb86fc; /* Títulos en púrpura claro */
 }
 
 .anuncio p {
-    color: gray;
+    color: #cccccc; /* Texto gris claro */
+}
+
+/* --- Banner Cookies en modo noche --- */
+#cookie-banner {
+    background-color: #333;
+    border-top: 2px solid #bb86fc;
+}
+
+#cookie-banner button {
+    background: #bb86fc;
+    color: black;
+}
+
+/* Mensaje flotante en modo noche */
+#mensaje-aviso {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid #bb86fc;
 }

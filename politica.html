@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Politica</title>
     <link rel="stylesheet" href="estilo.css" title="Predeterminado">
     <link rel="alternate stylesheet" type="text/css" href="noche.css" title="Noche">
 </head>
@@ -24,27 +24,22 @@
             </select>
         </nav>
     </header>
-
     <main>
-        <section id="login">
-            <form id="form-login" action="index.html" method="post" novalidate>
-                <h2>Iniciar sesión</h2>
-                
-                <label for="usuario">Usuario</label>
-                <input type="text" id="usuario" name="usuario">
-                <span id="error-usuario"></span>
-                    
-                <label for="pwd">Contraseña</label>
-                <input type="password" id="pwd" name="pwd">
-                <span id="error-pwd"></span>
-
-                <button type="submit">Confirmar</button>
-            </form>
-        </section>
+        <h2>Nuestra política</h2>
+        <p>Utilizamos cookies únicamente para recordar tu preferencia de estilo visual (Día/Noche).</p>
+        <p>Si rechazas las cookies, no podremos recordar tu selección para la próxima visita.</p>
+        
+        <hr>
+        
+        <h3>Cambiar configuración</h3>
+        <p>Aquí puedes cambiar tu decisión inicial:</p>
+        
+        <button id="btn-revertir-aceptar">Quiero ACEPTAR las cookies</button>
+        <button id="btn-revertir-rechazar">Quiero RECHAZAR las cookies</button>
     </main>
-
+    
     <footer>
-        © Leigh Garett Grupo 3 de Prácticas
+        © Leigh Garett Grupo 3
     </footer>
     <script src="codigo.js"></script>
 </body>

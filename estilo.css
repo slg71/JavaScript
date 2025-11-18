@@ -1,3 +1,5 @@
+/* JS/estilo.css */
+
 /* --- Reset básico --- */
 * {
     margin: 0;
@@ -6,18 +8,19 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: white;
-    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
+    background-color: #f4f6f8; /* Gris muy suave para el fondo (no blanco puro) */
+    color: #333333; /* Gris oscuro para texto (menos duro que negro puro) */
     line-height: 1.6;
 }
 
 /* --- Estructura --- */
 header {
-    background: black;
+    background: #2c3e50; /* Azul oscuro elegante */
     color: white;
     padding: 1rem;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 header h1 {
@@ -29,31 +32,36 @@ nav {
 }
 
 nav a {
-    color: white;
+    color: #ecf0f1; /* Blanco grisáceo */
     text-decoration: none;
     padding: 0 0.5rem;
+    font-weight: 500;
 }
 
 nav a:hover {
     text-decoration: underline;
+    color: #3498db; /* Azul claro al pasar el ratón */
 }
 
 main {
-    /* Centra la sección de formulario */
-    max-width: 500px;
-    margin: 2rem auto; /* 2rem arriba/abajo, auto a los lados */
-    padding: 1rem;
-    background: white;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white; /* Blanco puro para destacar sobre el fondo gris */
     border-radius: 8px;
-    box-shadow: 0 2px 5px black;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Sombra suave */
 }
 
 footer {
     text-align: center;
     padding: 1rem;
-    background: black;
-    color: white;
+    background: #2c3e50;
+    color: #bdc3c7;
     margin-top: 2rem;
+}
+
+footer a {
+    color: #3498db;
 }
 
 /* --- Formulario --- */
@@ -65,67 +73,107 @@ form {
 form h2 {
     text-align: center;
     margin-bottom: 1.5rem;
+    color: #2c3e50;
 }
 
 form label {
     margin-bottom: 0.5rem;
     font-weight: bold;
+    color: #555;
 }
 
 form input[type="text"],
 form input[type="password"] {
     padding: 0.75rem;
     margin-bottom: 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    width: 100%; /* Ocupa todo el ancho del 'main' */
+    width: 100%;
+    background-color: #fff;
+    color: #333;
+}
+
+/* Color de enfoque para inputs */
+form input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
 }
 
 form button {
     padding: 0.75rem;
     border: none;
     border-radius: 4px;
-    background: cornflowerblue;
+    background: #3498db; /* Azul vibrante */
     color: white;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s ease;
+    margin-top: 10px;
 }
 
 form button:hover {
-    background: blue;
+    background: #2980b9; /* Azul más oscuro */
 }
 
-
-/* --- Estilos AÑADIDOS para el selector de estilo --- */
+/* --- Estilos Selector Estilo --- */
 .selector-estilo {
     text-align: center;
     margin-top: 1rem;
 }
-.selector-estilo label {
-    font-size: 0.9rem;
-}
 
-/* --- Estilos AÑADIDOS para la página de anuncios --- */
-.ordenar {
-    margin: 1.5rem 0;
-}
-
+/* --- Estilos Anuncios --- */
 .anuncio {
-    background: #fff;
-    border: 1px solid #eee;
-    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e1e1e1;
+    padding: 1.5rem;
     margin-bottom: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.anuncio:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .anuncio h3 {
-    color: #5c67f2;
+    color: #2980b9;
     margin-bottom: 0.5rem;
 }
 
 .anuncio p {
-    font-size: 0.9rem;
-    color: #555;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* --- Banner Cookies y Errores (Mantienen funcionalidad) --- */
+#cookie-banner {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background-color: rgba(44, 62, 80, 0.95); /* Coherente con el header */
+    color: white; padding: 15px; text-align: center; z-index: 9999;
+    border-top: 3px solid #3498db;
+}
+
+#cookie-banner button {
+    margin: 0 10px; padding: 5px 15px; cursor: pointer;
+    background: #ecf0f1; border: none; color: #2c3e50; font-weight: bold;
+}
+
+#mensaje-aviso {
+    position: fixed; top: 20px; right: 20px;
+    background-color: #d4edda; border: 1px solid #c3e6cb;
+    color: #155724; padding: 20px; z-index: 10000; display: none;
+    border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Errores Rojos */
+#error-usuario, #error-pwd, #error-pwd2, #error-email {
+    display: block; color: #e74c3c; /* Rojo suave */
+    font-size: 0.9em; margin-bottom: 10px; font-weight: bold;
+}
+
+input[style*="border: 2px solid red"] {
+    background-color: #fceae9; border-color: #e74c3c !important;
 }

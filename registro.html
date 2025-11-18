@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
             <a href="registro.html">Registro</a>
             <a href="index.html">Login</a>
             <a href="anuncios.html">Anuncios</a>
+            <a href="politica.html">Política de cookies</a>
 
             <label for="selector-estilo">Estilo:</label>
             <select id="selector-estilo">
@@ -26,19 +27,24 @@
 
     <main>
         <section id="registro">
-            <form action="index.html" method="post">
+            <form id="form-registro" action="index.html" method="post" novalidate>
                 <h2>Registrar nuevo usuario</h2>
+                
                 <label for="usuario">Usuario</label>
                 <input type="text" id="usuario" name="usuario">
+                <span id="error-usuario"></span>
                     
                 <label for="pwd">Contraseña</label>
                 <input type="password" id="pwd" name="pwd">
+                <span id="error-pwd"></span>
 
                 <label for="pwd2">Repetir Contraseña</label>
                 <input type="password" id="pwd2" name="pwd2">
+                <span id="error-pwd2"></span>
 
                 <label for="email">Email</label>
                 <input type="text" id="email" name="email">
+                <span id="error-email"></span>
 
                 <button type="submit">Confirmar</button>
             </form>
