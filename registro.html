@@ -15,7 +15,6 @@
             <a href="registro.html">Registro</a>
             <a href="index.html">Login</a>
             <a href="anuncios.html">Anuncios</a>
-            <a href="politica.html">Política de cookies</a>
 
             <label for="selector-estilo">Estilo:</label>
             <select id="selector-estilo">
@@ -46,13 +45,32 @@
                 <input type="text" id="email" name="email">
                 <span id="error-email"></span>
 
+                <label>Sexo:</label>
+                <select name="sexo" id="sexo">
+                    <option value="h">Hombre</option>
+                    <option value="m">Mujer</option>
+                    <option value="o">Otro</option>
+                </select>
+
+                <label for="fecha">Fecha de nacimiento:</label>
+                <input type="date" id="fecha" name="fecha">
+
+                <label for="ciudad">Ciudad:</label>
+                <input type="text" id="ciudad" name="ciudad">
+
+                <label for="pais">País:</label>
+                <input type="text" id="pais" name="pais">
+
+                <label for="foto">Foto:</label>
+                <input type="file" id="foto" name="foto">
+
                 <button type="submit">Confirmar</button>
             </form>
         </section>
     </main>
 
     <footer>
-        © Leigh Garett Grupo 3 de Prácticas
+        © Leigh Garett Grupo 3 de Prácticas | <a href="politica.html" style="color: white;">Política de cookies</a>
     </footer>
     <script src="codigo.js"></script>
 </body>

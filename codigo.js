@@ -139,7 +139,7 @@ window.onload = function() {
     if (btnRevertirSi) {
         btnRevertirSi.onclick = function() {
             aceptarCookies();
-            alert("Has aceptado las cookies.");
+            mostrarAvisoFlotante("Se han guardado sus preferencias (ACEPTADO).");
         };
     }
 
@@ -147,7 +147,7 @@ window.onload = function() {
     if (btnRevertirNo) {
         btnRevertirNo.onclick = function() {
             rechazarCookies();
-            alert("Has rechazado las cookies. Se borra tu estilo guardado.");
+            mostrarAvisoFlotante("Se han rechazado las cookies. Preferencias borradas.");
             cambiarEstilo("Predeterminado"); // Vuelvo al normal
         };
     }
@@ -460,4 +460,22 @@ function ordenarAnuncios() {
     for (var j = 0; j < listaArray.length; j++) {
         contenedor.appendChild(listaArray[j]);
     }
+}
+
+function mostrarAvisoFlotante(mensaje) {
+    // 1. Crear el elemento
+    var aviso = document.createElement("section");
+    aviso.className = "aviso-flotante";
+    var texto = document.createTextNode(mensaje);
+    aviso.appendChild(texto);
+
+    // 2. Añadir al documento
+    document.body.appendChild(aviso);
+
+    // 3. Programar su eliminación a los 5 segundos
+    setTimeout(function() {
+        if (aviso.parentNode) {
+            aviso.parentNode.removeChild(aviso);
+        }
+    }, 5000);
 }
