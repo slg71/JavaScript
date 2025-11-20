@@ -1,55 +1,45 @@
-/* JS/estilo.css */
-
 /* --- Reset básico --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
-    background-color: #f4f6f8; /* Gris muy suave para el fondo (no blanco puro) */
-    color: #333333; /* Gris oscuro para texto (menos duro que negro puro) */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    color: #333333;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* --- Estructura --- */
 header {
-    background: #2c3e50; /* Azul oscuro elegante */
+    background: #2c3e50;
     color: white;
     padding: 1rem;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-header h1 {
-    margin-bottom: 0.25rem;
-}
-
-nav {
-    margin-top: 0.5rem;
-}
+header h1 { margin-bottom: 0.25rem; }
+nav { margin-top: 0.5rem; }
 
 nav a {
-    color: #ecf0f1; /* Blanco grisáceo */
+    color: #ecf0f1;
     text-decoration: none;
     padding: 0 0.5rem;
     font-weight: 500;
 }
 
-nav a:hover {
-    text-decoration: underline;
-    color: #3498db; /* Azul claro al pasar el ratón */
-}
+nav a:hover { text-decoration: underline; color: #3498db; }
 
 main {
     max-width: 600px;
     margin: 2rem auto;
     padding: 2rem;
-    background: white; /* Blanco puro para destacar sobre el fondo gris */
+    background: white;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Sombra suave */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    flex: 1;
 }
 
 footer {
@@ -60,27 +50,12 @@ footer {
     margin-top: 2rem;
 }
 
-footer a {
-    color: #3498db;
-}
+footer a { color: #3498db; }
 
 /* --- Formulario --- */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-form h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #2c3e50;
-}
-
-form label {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #555;
-}
+form { display: flex; flex-direction: column; }
+form h2 { text-align: center; margin-bottom: 1.5rem; color: #2c3e50; }
+form label { margin-bottom: 0.5rem; font-weight: bold; color: #555; }
 
 form input[type="text"],
 form input[type="password"] {
@@ -93,7 +68,6 @@ form input[type="password"] {
     color: #333;
 }
 
-/* Color de enfoque para inputs */
 form input:focus {
     border-color: #3498db;
     outline: none;
@@ -104,7 +78,7 @@ form button {
     padding: 0.75rem;
     border: none;
     border-radius: 4px;
-    background: #3498db; /* Azul vibrante */
+    background: #3498db;
     color: white;
     font-size: 1rem;
     font-weight: bold;
@@ -113,15 +87,25 @@ form button {
     margin-top: 10px;
 }
 
-form button:hover {
-    background: #2980b9; /* Azul más oscuro */
+form button:hover { background: #2980b9; }
+
+/* --- Clases para ERRORES (Manipuladas desde JS) --- */
+.error-input {
+    border: 2px solid red !important;
+    background-color: #fceae9;
+}
+
+/* El span del error */
+.error-texto {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    display: block;
+    font-weight: bold;
 }
 
 /* --- Estilos Selector Estilo --- */
-.selector-estilo {
-    text-align: center;
-    margin-top: 1rem;
-}
+#selector-estilo { margin-left: 10px; padding: 5px; }
 
 /* --- Estilos Anuncios --- */
 .anuncio {
@@ -138,42 +122,30 @@ form button:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.anuncio h3 {
-    color: #2980b9;
-    margin-bottom: 0.5rem;
-}
+.anuncio h3 { color: #2980b9; margin-bottom: 0.5rem; }
+.anuncio p { font-size: 0.95rem; color: #666; }
 
-.anuncio p {
-    font-size: 0.95rem;
-    color: #666;
-}
-
-/* --- Banner Cookies y Errores (Mantienen funcionalidad) --- */
-#cookie-banner {
+/* --- BANNER COOKIES (Clases) --- */
+.banner-cookies {
     position: fixed; bottom: 0; left: 0; width: 100%;
-    background-color: rgba(44, 62, 80, 0.95); /* Coherente con el header */
-    color: white; padding: 15px; text-align: center; z-index: 9999;
+    background-color: #2c3e50; color: white;
+    padding: 15px; text-align: center; z-index: 9999;
     border-top: 3px solid #3498db;
 }
 
-#cookie-banner button {
-    margin: 0 10px; padding: 5px 15px; cursor: pointer;
-    background: #ecf0f1; border: none; color: #2c3e50; font-weight: bold;
+.banner-cookies button {
+    margin-left: 10px; padding: 5px 15px;
+    background-color: #ecf0f1; color: #2c3e50;
+    border: none; cursor: pointer; font-weight: bold;
 }
 
-#mensaje-aviso {
+.banner-cookies button:hover { background-color: #bdc3c7; }
+
+/* --- AVISO FLOTANTE --- */
+.aviso-flotante {
     position: fixed; top: 20px; right: 20px;
-    background-color: #d4edda; border: 1px solid #c3e6cb;
-    color: #155724; padding: 20px; z-index: 10000; display: none;
-    border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* Errores Rojos */
-#error-usuario, #error-pwd, #error-pwd2, #error-email {
-    display: block; color: #e74c3c; /* Rojo suave */
-    font-size: 0.9em; margin-bottom: 10px; font-weight: bold;
-}
-
-input[style*="border: 2px solid red"] {
-    background-color: #fceae9; border-color: #e74c3c !important;
+    background-color: #d4edda; color: #155724;
+    padding: 15px; border: 1px solid #c3e6cb;
+    border-radius: 5px; z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }

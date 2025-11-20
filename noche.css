@@ -1,31 +1,22 @@
-/* JS/noche.css */
 @import url('estilo.css');
 
-/* Sobreescribimos las variables y colores */
-
 body {
-    background-color: #121212; /* Negro suave (Material Design standard) */
-    color: #e0e0e0; /* Blanco hueso para leer bien */
+    background-color: #121212; 
+    color: #e0e0e0; 
 }
 
-/* --- Estructura --- */
 header {
-    background: #1f1f1f; /* Gris muy oscuro */
+    background: #1f1f1f;
     color: #ffffff;
     border-bottom: 1px solid #333;
 }
 
-nav a {
-    color: #bb86fc; /* Púrpura claro (color de acento típico oscuro) */
-}
-
-nav a:hover {
-    color: #ffffff;
-}
+nav a { color: #bb86fc; }
+nav a:hover { color: #ffffff; }
 
 main {
-    background: #1e1e1e; /* Tarjeta gris oscura */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Sombra negra fuerte */
+    background: #1e1e1e;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
 footer {
@@ -34,20 +25,11 @@ footer {
     border-top: 1px solid #333;
 }
 
-footer a {
-    color: #bb86fc;
-}
+footer a { color: #bb86fc; }
 
-/* --- Formulario --- */
-form h2 {
-    color: #ffffff;
-}
+form h2 { color: #ffffff; }
+form label { color: #b0b0b0; }
 
-form label {
-    color: #b0b0b0;
-}
-
-/* Inputs: Fondo oscuro, borde visible, texto claro */
 form input[type="text"],
 form input[type="password"] {
     background-color: #2d2d2d;
@@ -61,54 +43,43 @@ form input:focus {
     box-shadow: 0 0 5px rgba(187, 134, 252, 0.3);
 }
 
-/* Inputs con error en modo noche */
-input[style*="border: 2px solid red"] {
-    background-color: #3a1c1c; /* Fondo rojizo oscuro */
-    border-color: #cf6679 !important; /* Rojo pastel */
-    color: white;
-}
-
-/* Mensajes de error más claros */
-#error-usuario, #error-pwd, #error-pwd2, #error-email {
-    color: #cf6679;
-}
-
 form button {
-    background: #bb86fc; /* Púrpura */
-    color: #000000; /* Texto negro para contraste sobre púrpura */
+    background: #bb86fc;
+    color: #000000;
 }
 
-form button:hover {
-    background: #9965f4;
+form button:hover { background: #9965f4; }
+
+/* Errores en Noche */
+.error-input {
+    background-color: #3a1c1c !important;
+    border-color: #cf6679 !important;
+    color: white !important;
 }
 
-/* --- Anuncios --- */
+.error-texto { color: #cf6679 !important; }
+
+/* Anuncios en Noche */
 .anuncio {
-    background: #2c2c2c; /* Tarjeta diferenciada del fondo */
-    border: 1px solid #444; /* Borde gris visible */
+    background: #2c2c2c;
+    border: 1px solid #444;
 }
 
-.anuncio h3 {
-    color: #bb86fc; /* Títulos en púrpura claro */
-}
+.anuncio h3 { color: #bb86fc; }
+.anuncio p { color: #cccccc; }
 
-.anuncio p {
-    color: #cccccc; /* Texto gris claro */
-}
-
-/* --- Banner Cookies en modo noche --- */
-#cookie-banner {
+/* Banner en Noche */
+.banner-cookies {
     background-color: #333;
     border-top: 2px solid #bb86fc;
 }
-
-#cookie-banner button {
+.banner-cookies button {
     background: #bb86fc;
     color: black;
 }
 
-/* Mensaje flotante en modo noche */
-#mensaje-aviso {
+/* Aviso en Noche */
+.aviso-flotante {
     background-color: #2d2d2d;
     color: #ffffff;
     border: 1px solid #bb86fc;
