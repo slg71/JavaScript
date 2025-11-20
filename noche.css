@@ -11,8 +11,12 @@ header {
     border-bottom: 1px solid #333;
 }
 
-nav a { color: #bb86fc; }
-nav a:hover { color: #ffffff; }
+nav a {
+    color: #bb86fc;
+}
+nav a:hover {
+    color: #ffffff;
+}
 
 main {
     background: #1e1e1e;
@@ -25,10 +29,16 @@ footer {
     border-top: 1px solid #333;
 }
 
-footer a { color: #bb86fc; }
+footer a {
+    color: #bb86fc;
+}
 
-form h2 { color: #ffffff; }
-form label { color: #b0b0b0; }
+form h2 {
+    color: #ffffff;
+}
+form label {
+    color: #b0b0b0;
+}
 
 form input[type="text"],
 form input[type="password"] {
@@ -48,7 +58,9 @@ form button {
     color: #000000;
 }
 
-form button:hover { background: #9965f4; }
+form button:hover {
+    background: #9965f4;
+}
 
 /* Errores en Noche */
 .error-input {
@@ -65,8 +77,12 @@ form button:hover { background: #9965f4; }
     border: 1px solid #444;
 }
 
-.anuncio h3 { color: #bb86fc; }
-.anuncio p { color: #cccccc; }
+.anuncio h3 {
+    color: #bb86fc;
+}
+.anuncio p {
+    color: #cccccc;
+}
 
 /* Banner en Noche */
 .banner-cookies {

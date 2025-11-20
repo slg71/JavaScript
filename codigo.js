@@ -1,21 +1,14 @@
-/* ==========================================================================
-   1. FUNCIONES DE COOKIES (Copiadas de las páginas 11 y 13)
-   El enunciado nos da este código hecho, así que lo uso tal cual.
-   ========================================================================== 
-*/
-
-// Función para guardar una cookie. 
-// c_name: nombre, value: valor, expiredays: días que dura
+/* --- 1. GESTIÓN DE COOKIES --- */
+/* Función copiada del PDF */
 function setCookie(c_name, value, expiredays) {
     var exdate = new Date();
     exdate.setDate(exdate.getDate() + expiredays);
-    // Guardo la cookie escapando el valor y poniendo la fecha si hace falta
-    // Le añado path=/ para que funcione en todas las carpetas de la web
+    // Se asegura el path=/ para que funcione en todo el sitio
     document.cookie = c_name + "=" + escape(value) +
         ((expiredays == null) ? "" : "; expires=" + exdate.toGMTString()) + "; path=/";
 }
 
-// Función para leer una cookie.
+/* Función copiada del PDF */
 function getCookie(c_name) {
     if (document.cookie.length > 0) {
         c_start = document.cookie.indexOf(c_name + "=");
@@ -29,443 +22,144 @@ function getCookie(c_name) {
     return "";
 }
 
-/* ==========================================================================
-   2. GESTIÓN DE ESTILOS (Basado en las páginas 9 y 10)
-   Recorro los <link> y activo/desactivo según el título.
-   ========================================================================== 
-*/
-
+/* --- 2. GESTIÓN DE ESTILOS --- */
 function cambiarEstilo(titulo) {
-    // Cojo todos los <link> de la página
     var arrayLink = document.getElementsByTagName('link');
-    
-    // Recorro uno a uno
     for (var i = 0; i < arrayLink.length; i++) {
-        var link = arrayLink[i];
-        
-        // Miro si es una hoja de estilo (rel contiene stylesheet) y no es la de imprimir
-        if (link.getAttribute('rel') != null && 
-            link.getAttribute('rel').indexOf('stylesheet') != -1 && 
-            link.getAttribute('media') != 'print') {
-
-            var tituloHoja = link.getAttribute('title');
+        // Busamos links que sean stylesheets y no sean de impresión
+        if (arrayLink[i].getAttribute('rel') != null && 
+            arrayLink[i].getAttribute('rel').indexOf('stylesheet') != -1 && 
+            arrayLink[i].getAttribute('media') != 'print') {
             
-            // Si tiene título, es una de las que puedo cambiar (Principal o Noche)
-            if (tituloHoja != null && tituloHoja.length > 0) {
-                if (tituloHoja == titulo) {
-                    // El PDF dice que disabled = false es ACTIVAR
-                    link.disabled = false; 
+            var linkTitle = arrayLink[i].getAttribute('title');
+            if (linkTitle != null && linkTitle.length > 0) {
+                if (linkTitle == titulo) {
+                    arrayLink[i].disabled = false;
                 } else {
-                    // disabled = true es DESACTIVAR
-                    link.disabled = true;  
+                    arrayLink[i].disabled = true;
                 }
             }
         }
     }
-
-    /*SE GUARDA PERO AL CAMBIAR DE PÁGINA NO SE PONE*/
-    // Guardar en cookie solo si el usuario aceptó cookies
-    var aceptado = getCookie('aceptar_cookies');
-    if (aceptado == 'si') {
-        // Guardo la preferencia 45 días
-        setCookie('estilo_seleccionado', titulo, 45); 
+    
+    // Solo guardamos la cookie si el usuario aceptó previamente
+    var acepta = getCookie('aceptar_cookies');
+    if (acepta == 'si') {
+        // Duración 45 días
+        setCookie('estilo_seleccionado', titulo, 45);
     }
 }
 
-/* ==========================================================================
-   3. AL CARGAR LA PÁGINA (window.onload)
-   Aquí pongo todo lo que tiene que arrancar al principio.
-   ========================================================================== 
-*/
+/* --- 3. INICIALIZACIÓN (ONLOAD) --- */
 window.onload = function() {
-    
-    // 1. Comprobar cookies y estilo guardado
-    var decision = getCookie('aceptar_cookies');
-    var estiloGuardado = getCookie('estilo_seleccionado');
-
-    if (decision == 'si') {
-        // Si ya aceptó, y hay un estilo guardado, lo pongo
-        if (estiloGuardado != "" && estiloGuardado != null) {
-            cambiarEstilo(estiloGuardado);
-            
-            // También actualizo el select para que se vea bien la opción
-            var selector = document.getElementById("selector-estilo");
-            if (selector) {
-                selector.value = estiloGuardado;
-            }
+    // 1. Recuperar estilo guardado si existe cookie
+    var estilo = getCookie('estilo_seleccionado');
+    if (estilo != "" && estilo != null) {
+        cambiarEstilo(estilo);
+        // Sincronizar el select si existe en la página
+        var selector = document.getElementById("selector-estilo");
+        if(selector) {
+             selector.value = estilo;
         }
-    } else if (decision == "" || decision == null) {
-        // Si no hay cookie de decisión, es la primera vez: muestro el banner
-        mostrarBanner();
     }
-
-    // 2. Asignar funciones a los botones y formularios
     
-    // Cuando cambian el select de estilo
-    var selector = document.getElementById("selector-estilo");
-    if (selector) {
-        selector.onchange = function() {
-            // this.value es lo que ha elegido el usuario (Predeterminado o Noche)
+    // 2. Comprobar aviso de cookies (aparece si no hay cookie definida)
+    var acepta = getCookie('aceptar_cookies');
+    if (acepta == "") {
+        crearBannerCookies(); 
+    }
+
+    // Selector de estilo
+    if (document.getElementById("selector-estilo")) {
+        document.getElementById("selector-estilo").onchange = function() {
             cambiarEstilo(this.value);
-        };
+        }
     }
-
-    // Validar Login
-    var formLogin = document.getElementById("form-login");
-    if (formLogin) {
-        formLogin.onsubmit = function() {
+    
+    // Formulario Login
+    if (document.getElementById("form-login")) {
+        document.getElementById("form-login").onsubmit = function() {
             return validarLogin();
-        };
+        }
     }
 
-    // Validar Registro
-    var formRegistro = document.getElementById("form-registro");
-    if (formRegistro) {
-        formRegistro.onsubmit = function() {
+    // Formulario Registro
+    if (document.getElementById("form-registro")) {
+        document.getElementById("form-registro").onsubmit = function() {
             return validarRegistro();
-        };
+        }
     }
 
-    // Ordenar Anuncios
-    var selectorOrden = document.getElementById("selector-orden");
-    if (selectorOrden) {
-        selectorOrden.onchange = function() {
-            ordenarAnuncios();
-        };
+    // Ordenación de anuncios
+    if (document.getElementById("selector-orden")) {
+        document.getElementById("selector-orden").onchange = function() {
+            ordenarAnunciosBurbuja();
+        }
     }
-
-    // Botones de la página Política de Cookies (para arrepentirse)
-    var btnRevertirSi = document.getElementById("btn-revertir-aceptar");
-    if (btnRevertirSi) {
-        btnRevertirSi.onclick = function() {
-            aceptarCookies();
-            mostrarAvisoFlotante("Se han guardado sus preferencias (ACEPTADO).");
-        };
+    
+    // Página Política de Cookies: Botones para revertir decisión
+    if (document.getElementById("btn-revertir-aceptar")) {
+        document.getElementById("btn-revertir-aceptar").onclick = function() {
+             gestionarConsentimiento('si');
+        }
     }
-
-    var btnRevertirNo = document.getElementById("btn-revertir-rechazar");
-    if (btnRevertirNo) {
-        btnRevertirNo.onclick = function() {
-            rechazarCookies();
-            mostrarAvisoFlotante("Se han rechazado las cookies. Preferencias borradas.");
-            cambiarEstilo("Predeterminado"); // Vuelvo al normal
-        };
+    if (document.getElementById("btn-revertir-rechazar")) {
+        document.getElementById("btn-revertir-rechazar").onclick = function() {
+             gestionarConsentimiento('no');
+        }
     }
 };
 
-/* ==========================================================================
-   4. EL BANNER DE COOKIES (DOM Nodo a Nodo)
-   usar createElement y appendChild en vez de innerHTML.
-   ========================================================================== 
-*/
-function mostrarBanner() {
-    // Creo la sección
-    var seccion = document.createElement("section");
-    seccion.id = "cookie-banner";
-    seccion.className = "banner-cookies";
+/* --- 4. UI: BANNER Y AVISOS --- */
+function crearBannerCookies() {
+    var section = document.createElement("section");
+    section.classList.add("banner-cookies"); 
+    section.id = "banner-cookies";
     
-    // Creo el texto
-    var texto = document.createElement("span");
-    var contenidoTexto = document.createTextNode("Esta web usa cookies propias. ¿Aceptas? ");
-    texto.appendChild(contenidoTexto);
+    var p = document.createElement("p");
+    var texto = document.createTextNode("Este sitio web usa cookies propias para mejorar la experiencia. ");
+    p.appendChild(texto);
+    section.appendChild(p);
     
-    // Botón Aceptar
-    var btnSi = document.createElement("button");
-    var textoSi = document.createTextNode("Aceptar");
-    btnSi.appendChild(textoSi);
-    btnSi.onclick = function() {
-        aceptarCookies();
-        // Oculto el banner accediendo al estilo directamente
-        seccion.style.display = "none"; 
+    var btnAceptar = document.createElement("button");
+    btnAceptar.appendChild(document.createTextNode("Aceptar"));
+    btnAceptar.onclick = function() {
+        gestionarConsentimiento('si');
+        document.body.removeChild(section);
     };
-    
-    // Botón Rechazar
-    var btnNo = document.createElement("button");
-    var textoNo = document.createTextNode("Rechazar");
-    btnNo.appendChild(textoNo);
-    btnNo.onclick = function() {
-        rechazarCookies();
-        seccion.style.display = "none"; 
+    section.appendChild(btnAceptar);
+
+    var btnRechazar = document.createElement("button");
+    btnRechazar.appendChild(document.createTextNode("Rechazar"));
+    btnRechazar.onclick = function() {
+        gestionarConsentimiento('no');
+        document.body.removeChild(section);
     };
+    section.appendChild(btnRechazar);
     
-    // Meto todo dentro de la sección
-    seccion.appendChild(texto);
-    seccion.appendChild(btnSi);
-    seccion.appendChild(btnNo);
-    
-    // Lo añado al body
-    document.body.appendChild(seccion);
+    document.body.appendChild(section);
 }
 
-function aceptarCookies() {
-    // Guardo 'si' por 90 días
-    setCookie('aceptar_cookies', 'si', 90);
-    
-    // Si el usuario ya había cambiado el estilo antes de aceptar, lo guardo ahora
-    var selector = document.getElementById("selector-estilo");
-    if (selector) {
-        setCookie('estilo_seleccionado', selector.value, 45);
-    }
-}
-
-function rechazarCookies() {
-    // Guardo 'no' por 90 días
-    setCookie('aceptar_cookies', 'no', 90);
-    // Borro la cookie de estilo poniéndole fecha caducada (-1)
-    setCookie('estilo_seleccionado', "", -1); 
-}
-
-/* ==========================================================================
-   5. VALIDACIONES
-   ========================================================================== 
-*/
-
-// Función auxiliar para mostrar errores en el SPAN correspondiente
-function mostrarError(id, mensaje) {
-    var span = document.getElementById("error-" + id);
-    
-    // Limpio lo que hubiera antes
-    while (span.firstChild) {
-        span.removeChild(span.firstChild);
-    }
-    
-    // Pongo el texto nuevo
-    var texto = document.createTextNode(mensaje);
-    span.appendChild(texto);
-    span.className = "error-texto"; 
-    
-    var input = document.getElementById(id);
-    input.className = "error-input";
-}
-
-function limpiarErrores() {
-    var inputs = document.getElementsByTagName("input");
-    for(var i=0; i<inputs.length; i++) {
-        inputs[i].className = "";
-    }
-    
-    var spans = document.getElementsByTagName("span");
-    for(var j=0; j<spans.length; j++) {
-        if(spans[j].id.indexOf("error-") != -1) {
-             // Borramos el texto
-             while (spans[j].firstChild) { spans[j].removeChild(spans[j].firstChild); }
-             // Quitamos la clase roja también
-             spans[j].className = ""; 
-        }
-    }
-}
-
-function validarLogin() {
-    var usuario = document.getElementById("usuario").value;
-    var pass = document.getElementById("pwd").value;
-    var hayError = false;
-    
-    limpiarErrores();
-
-    // "evita que el usuario escriba únicamente espacios en blanco"
-    // Regex: \s son espacios. ^\s*$ significa "todo espacios de principio a fin".
-    var regexVacio = /^\s*$/;
-
-    if (regexVacio.test(usuario)) {
-        mostrarError("usuario", "El usuario no puede estar vacío.");
-        hayError = true;
-    }
-    if (regexVacio.test(pass)) {
-        mostrarError("pwd", "La contraseña no puede estar vacía.");
-        hayError = true;
-    }
-
-    // Devuelvo false si hay error para que el formulario NO se envíe
-    return !hayError; 
-}
-
-function validarRegistro() {
-    var usu = document.getElementById("usuario").value;
-    var pass1 = document.getElementById("pwd").value;
-    var pass2 = document.getElementById("pwd2").value;
-    var email = document.getElementById("email").value;
-    var hayError = false;
-
-    limpiarErrores();
-
-    // 1. USUARIO
-    // Letras inglés (mayus/minus) y números. Empieza por letra. 3-15 caracteres.
-    var regexUsu = /^[a-zA-Z][a-zA-Z0-9]{2,14}$/;
-    if (!regexUsu.test(usu)) {
-        mostrarError("usuario", "Usuario mal: empieza letra, solo letras/num, 3-15 car.");
-        hayError = true;
-    }
-
-    // 2. CONTRASEÑA
-    // 6-15 chars. Letras, nums, - y _. Debe tener 1 Mayus, 1 Minus, 1 Num.
-    var errorPass = "";
-    
-    // Hago comprobaciones por partes para que sea más fácil
-    if (pass1.length < 6 || pass1.length > 15) {
-        errorPass = "Longitud incorrecta (6-15). ";
-    } else if (!/[A-Z]/.test(pass1)) {
-        errorPass = "Falta mayúscula. ";
-    } else if (!/[a-z]/.test(pass1)) {
-        errorPass = "Falta minúscula. ";
-    } else if (!/[0-9]/.test(pass1)) {
-        errorPass = "Falta número. ";
-    } else if (!/^[a-zA-Z0-9\-_]+$/.test(pass1)) {
-        errorPass = "Caracteres prohibidos (solo letras, num, - y _).";
-    }
-
-    if (errorPass != "") {
-        mostrarError("pwd", errorPass);
-        hayError = true;
-    }
-
-    if (pass1 != pass2) {
-        mostrarError("pwd2", "Las contraseñas no coinciden.");
-        hayError = true;
-    }
-
-    // 3. EMAIL
-    // Divido por la arroba
-    var partes = email.split("@");
-    
-    if (partes.length != 2) {
-        mostrarError("email", "Falta la @ o hay demasiadas.");
-        hayError = true;
+/* Función auxiliar para manejar la lógica de aceptación/rechazo */
+function gestionarConsentimiento(accion) {
+    if (accion == 'si') {
+        // 90 días
+        setCookie('aceptar_cookies', 'si', 90);
+        mostrarAvisoFlotante("Has aceptado las cookies. Se guardará tu estilo.");
     } else {
-        var local = partes[0];
-        var dominio = partes[1];
-
-        // Valido parte Local
-        // Regex: Letras, nums, y caracteres raros permitidos. 
-        // Empieza y acaba sin punto se comprueba aparte.
-        var regexLocalChars = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~.]+$/;
-        
-        if (local.length < 1 || local.length > 64) {
-            mostrarError("email", "Longitud local mal (1-64).");
-            hayError = true;
-        } else if (!regexLocalChars.test(local)) {
-            mostrarError("email", "Caracteres prohibidos en parte local.");
-            hayError = true;
-        } else if (local.startsWith(".") || local.endsWith(".")) {
-            mostrarError("email", "Punto al inicio o final (local).");
-            hayError = true;
-        } else if (local.indexOf("..") != -1) {
-            mostrarError("email", "Dos puntos seguidos (local).");
-            hayError = true;
-        }
-
-        // Valido Dominio
-        else if (dominio.length > 255) {
-             mostrarError("email", "Dominio muy largo.");
-             hayError = true;
-        } else {
-            // El dominio se divide por puntos
-            var subs = dominio.split(".");
-            for (var k = 0; k < subs.length; k++) {
-                var sub = subs[k];
-                // Reglas subdominio: 1-63, letras/num/guion, no guion al principio/final
-                var regexSub = /^[a-zA-Z0-9-]+$/;
-                
-                if (sub.length < 1 || sub.length > 63) {
-                    mostrarError("email", "Subdominio mal longitud.");
-                    hayError = true;
-                    break;
-                }
-                if (!regexSub.test(sub)) {
-                    mostrarError("email", "Caracter prohibido en dominio.");
-                    hayError = true;
-                    break;
-                }
-                if (sub.startsWith("-") || sub.endsWith("-")) {
-                    mostrarError("email", "Guion al inicio o final en dominio.");
-                    hayError = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    if (hayError) {
-        return false;
-    } else {
-        alert("¡Registro correcto!");
-        return true;
+        setCookie('aceptar_cookies', 'no', 90);
+        // Si rechaza, borramos la cookie de estilo (fecha pasada)
+        setCookie('estilo_seleccionado', "", -1);
+        cambiarEstilo("Predeterminado");
+        mostrarAvisoFlotante("Has rechazado las cookies. No se guardará tu estilo.");
     }
 }
 
-/* ==========================================================================
-   6. ORDENACIÓN
-   "Se tiene que realizar con las funciones del DOM nodo a nodo"
-   ========================================================================== 
-*/
-function ordenarAnuncios() {
-    var contenedor = document.getElementById("lista-anuncios");
-    var selector = document.getElementById("selector-orden");
-    
-    // Cojo todos los <article> (son los anuncios)
-    var elementos = contenedor.getElementsByTagName("article");
-    
-    // Los paso a un array de verdad para poder usar sort()
-    var listaArray = [];
-    for (var i = 0; i < elementos.length; i++) {
-        listaArray.push(elementos[i]);
-    }
-
-    // Veo qué ha elegido el usuario
-    var opcion = selector.value;
-
-    // Ordeno el array
-    listaArray.sort(function(a, b) {
-        // Saco los datos de los atributos data- para comparar
-        var precioA = parseFloat(a.getAttribute("data-precio"));
-        var precioB = parseFloat(b.getAttribute("data-precio"));
-        
-        var tituloA = a.getAttribute("data-titulo").toLowerCase();
-        var tituloB = b.getAttribute("data-titulo").toLowerCase();
-        
-        var fechaA = new Date(a.getAttribute("data-fecha"));
-        var fechaB = new Date(b.getAttribute("data-fecha"));
-
-        var ciudadA = a.getAttribute("data-ciudad").toLowerCase();
-        var ciudadB = b.getAttribute("data-ciudad").toLowerCase();
-
-        var paisA = a.getAttribute("data-pais").toLowerCase();
-        var paisB = b.getAttribute("data-pais").toLowerCase();
-
-        // Comparo según la opción elegida
-        if (opcion == "precio-asc") {
-            return precioA - precioB; // Menor a mayor
-        } else if (opcion == "precio-desc") {
-            return precioB - precioA; // Mayor a menor
-        } 
-        else if (opcion == "titulo-asc") {
-            return tituloA.localeCompare(tituloB);
-        } else if (opcion == "titulo-desc") {
-            return tituloB.localeCompare(tituloA);
-        }
-        else if (opcion == "fecha-asc") {
-            return fechaA - fechaB;
-        } else if (opcion == "fecha-desc") {
-            return fechaB - fechaA;
-        }
-        else if (opcion == "ciudad-asc") {
-            return ciudadA.localeCompare(ciudadB);
-        }
-        else if (opcion == "pais-asc") {
-            return paisA.localeCompare(paisB);
-        }
-        return 0;
-    });
-
-    // Vuelvo a ponerlos en el HTML ordenados (appendChild MUEVE el nodo, no lo duplica)
-    for (var j = 0; j < listaArray.length; j++) {
-        contenedor.appendChild(listaArray[j]);
-    }
-}
-
+/* Aviso flotante que desaparece a los 5 segundos  */
 function mostrarAvisoFlotante(mensaje) {
     // 1. Crear el elemento
     var aviso = document.createElement("section");
-    aviso.className = "aviso-flotante";
+    aviso.classList.add("aviso-flotante");
     var texto = document.createTextNode(mensaje);
     aviso.appendChild(texto);
 
@@ -478,4 +172,287 @@ function mostrarAvisoFlotante(mensaje) {
             aviso.parentNode.removeChild(aviso);
         }
     }, 5000);
+}
+
+/* --- 5. VALIDACIONES --- */
+/* Helper para limpiar errores visuales */
+function limpiarErrores() {
+    var inputs = document.getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].classList.remove("error-input");
+    }
+    var spans = document.getElementsByClassName("error-texto");
+    // Convertimos a array para evitar problemas al modificar la colección
+    var listaSpans = [];
+    for(var j=0; j<spans.length; j++) listaSpans.push(spans[j]);
+    
+    for (var k = 0; k < listaSpans.length; k++) {
+        listaSpans[k].textContent = ""; 
+    }
+}
+
+/* Helper para mostrar error */
+function mostrarError(idInput, idSpan, mensaje) {
+    var input = document.getElementById(idInput);
+    var span = document.getElementById(idSpan);
+
+    if (input) input.classList.add("error-input");
+
+    if (span) {
+        span.textContent = mensaje;
+        span.classList.add("error-texto"); 
+    }
+}
+
+function validarLogin() {
+    limpiarErrores();
+    var u = document.getElementById("usuario");
+    var p = document.getElementById("pwd");
+    var hayError = false;
+    
+    // Comprobar que no esté vacío ni solo espacios
+    var regexVacio = /^\s*$/;
+    
+    if (regexVacio.test(u.value)) {
+        mostrarError("usuario", "error-usuario", "El usuario es obligatorio.");
+        hayError = true;
+    }
+    if (regexVacio.test(p.value)) {
+        mostrarError("pwd", "error-pwd", "La contraseña es obligatoria.");
+        hayError = true;
+    }
+    
+    return !hayError;
+}
+
+function validarRegistro() {
+    limpiarErrores();
+    var usu = document.getElementById("usuario");
+    var pass = document.getElementById("pwd");
+    var pass2 = document.getElementById("pwd2");
+    var email = document.getElementById("email");
+    var hayError = false;
+
+    // 1. Usuario: Letras inglés y números. NO empezar por número. 3-15 chars
+    // ^[a-zA-Z] -> empieza por letra
+    // [a-zA-Z0-9]{2,14}$ -> siguen 2 a 14 caracteres (total 3-15)
+    var regexUsu = /^[a-zA-Z][a-zA-Z0-9]{2,14}$/;
+    if (!regexUsu.test(usu.value)) {
+        mostrarError("usuario", "error-usuario", "Usuario inválido (3-15 car., debe empezar por letra).");
+        hayError = true;
+    }
+
+    // 2. Contraseña: 6-15 chars, letras inglesas, numeros, - y _.
+    // Debe tener al menos 1 mayúscula, 1 minúscula y 1 número
+    var p = pass.value;
+    var longitudOk = p.length >= 6 && p.length <= 15;
+    var caracteresOk = /^[a-zA-Z0-9\-_]+$/.test(p);
+    var tieneMayus = /[A-Z]/.test(p);
+    var tieneMinus = /[a-z]/.test(p);
+    var tieneNum = /[0-9]/.test(p);
+
+    if (!longitudOk) {
+        mostrarError("pwd", "error-pwd", "La contraseña debe tener entre 6 y 15 caracteres.");
+        hayError = true;
+    } else if (!caracteresOk) {
+        mostrarError("pwd", "error-pwd", "Caracteres no permitidos.");
+        hayError = true;
+    } else if (!tieneMayus || !tieneMinus || !tieneNum) {
+        mostrarError("pwd", "error-pwd", "Debe contener mayúscula, minúscula y número.");
+        hayError = true;
+    }
+
+    if (pass.value != pass2.value) {
+        mostrarError("pwd2", "error-pwd2", "Las contraseñas no coinciden.");
+        hayError = true;
+    }
+
+    // 3. Email: Validación manual estricta
+    var em = email.value;
+    var partes = em.split("@");
+    
+    if (partes.length != 2) {
+        mostrarError("email", "error-email", "Formato incorrecto (falta @ o hay varias).");
+        hayError = true;
+    } else {
+        var local = partes[0];
+        var dominio = partes[1];
+        
+        // Parte local
+        var regexLocalChars = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~.]+$/;
+        
+        if (local.length < 1 || local.length > 64) {
+            mostrarError("email", "error-email", "Longitud parte local incorrecta (1-64).");
+            hayError = true;
+        } else if (!regexLocalChars.test(local)) {
+            mostrarError("email", "error-email", "Caracteres inválidos en parte local.");
+            hayError = true;
+        } else if (local.startsWith('.') || local.endsWith('.')) {
+            mostrarError("email", "error-email", "El punto no puede ir al inicio o final.");
+            hayError = true;
+        } else if (local.indexOf('..') != -1) {
+            mostrarError("email", "error-email", "No puede haber dos puntos seguidos.");
+            hayError = true;
+        } else if (dominio.length > 255) {
+             mostrarError("email", "error-email", "Dominio demasiado largo.");
+             hayError = true;
+        } else {
+            // Validación de subdominios
+            var subdominios = dominio.split(".");
+            if (subdominios.length < 2 && dominio.indexOf(".") == -1) { 
+                // Se asume que debe haber al menos un punto en dominio
+                // El PDF dice "secuencia de uno o más subdominios separados por punto" ?????
+                mostrarError("email", "error-email", "El dominio debe contener al menos un punto y una extensión (ej: .com).");
+                hayError = true;
+            }
+            
+            for (var i = 0; i < subdominios.length; i++) {
+                var sub = subdominios[i];
+                var regexSub = /^[a-zA-Z0-9-]+$/;
+                
+                if (sub.length < 1 || sub.length > 63) {
+                    mostrarError("email", "error-email", "Subdominio longitud incorrecta (1-63).");
+                    hayError = true;
+                    break;
+                } else if (!regexSub.test(sub)) {
+                    mostrarError("email", "error-email", "Caracteres inválidos en dominio.");
+                    hayError = true;
+                    break;
+                } else if (sub.startsWith('-') || sub.endsWith('-')) {
+                    mostrarError("email", "error-email", "Guion no puede ir al inicio o final del subdominio.");
+                    hayError = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return !hayError;
+}
+
+/* --- 6. ORDENACIÓN (Bubble Sort) --- */
+
+function ordenarAnunciosBurbuja() {
+    var contenedor = document.getElementById("lista-anuncios");
+    if (!contenedor) return;
+
+    var articulos = contenedor.getElementsByTagName("article");
+    var criterio = document.getElementById("selector-orden").value;
+    
+    // Convertir HTMLCollection a Array para manipular
+    var lista = [];
+    for(var i=0; i<articulos.length; i++) {
+        lista.push(articulos[i]);
+    }
+    
+    /* Algoritmo de la Burbuja */
+    for (var i = 0; i < lista.length - 1; i++) {
+        for (var j = 0; j < lista.length - 1 - i; j++) {
+            
+            var nodoA = lista[j];
+            var nodoB = lista[j+1];
+            
+            var valA = obtenerValorCriterio(nodoA, criterio);
+            var valB = obtenerValorCriterio(nodoB, criterio);
+            
+            // Determinar si hay que intercambiar
+            var intercambiar = false;
+            
+            // Detectar si es orden ascendente o descendente
+            if (criterio.indexOf("asc") != -1) {
+                if (valA > valB) intercambiar = true;
+            } else {
+                // Descendente
+                if (valA < valB) intercambiar = true;
+            }
+            
+            if (intercambiar) {
+                var temp = lista[j];
+                lista[j] = lista[j+1];
+                lista[j+1] = temp;
+            }
+        }
+    }
+    
+    // Reinsertar en el DOM nodo a nodo (appendChild mueve el elemento existente) 
+    for(var k=0; k<lista.length; k++) {
+        contenedor.appendChild(lista[k]);
+    }
+}
+
+/* Función auxiliar para extraer el dato del DOM según el criterio */
+function obtenerValorCriterio(nodo, criterio) {
+    // 1. PRECIO
+    if (criterio.indexOf("precio") != -1) {
+        var texto = nodo.textContent || nodo.innerText;
+        // Buscamos donde empiezan los dos puntos
+        var inicio = texto.indexOf(":");
+        if (inicio != -1) {
+            // Extraemos desde los dos puntos hasta el final
+            var valorSucio = texto.substring(inicio + 1);
+            // parseInt detendrá la lectura al encontrar el símbolo € no numérico
+            return parseInt(valorSucio); 
+        }
+        return 0;
+    } 
+    // 2. TÍTULO
+    else if (criterio.indexOf("titulo") != -1) {
+        var h3 = nodo.getElementsByTagName("h3");
+        if (h3.length > 0) {
+             // Convertimos a minúsculas para ordenar bien
+            return h3[0].textContent.toLowerCase();
+        }
+        return "";
+    }
+    // 3. FECHA, CIUDAD y PAÍS
+    else {
+        var parrafos = nodo.getElementsByTagName("p");
+
+        for (var i = 0; i < parrafos.length; i++) {
+            var pTexto = parrafos[i].textContent.toLowerCase();
+            // A) Caso FECHA
+            // Buscamos la palabra "fecha" usando indexOf
+            if (criterio.indexOf("fecha") != -1 && pTexto.indexOf("fecha") != -1) {
+                var inicio = pTexto.indexOf(":");
+                if (inicio != -1) {
+                    // Extraemos la fecha
+                    // substring(inicio + 1) toma desde los dos puntos al final
+                    var fechaTexto = pTexto.substring(inicio + 1);
+                    
+                    // Pasamos el string al constructor Date para poder comparar tiempos
+                    var fechaObj = new Date(fechaTexto);
+                    return fechaObj.getTime();
+                }
+            }
+
+            // B) Caso UBICACIÓN (Ciudad o País)
+            // <p>Ubicación: Madrid, España</p>
+            if ((criterio.indexOf("ciudad") != -1 || criterio.indexOf("pais") != -1) && pTexto.indexOf("ubicación") != -1) {
+                
+                var dosPuntos = pTexto.indexOf(":");
+                if (dosPuntos != -1) {
+                    // Obtenemos " madrid, españa"
+                    var resto = pTexto.substring(dosPuntos + 1);
+                    // Buscamos la coma separadora como con las cookies
+                    var coma = resto.indexOf(",");
+                    
+                    if (criterio.indexOf("ciudad") != -1) {
+                        if (coma != -1) {
+                            // Ciudad es desde el inicio hasta la coma
+                            return resto.substring(0, coma);
+                        } else {
+                            return resto; // Si no hay coma, devolvemos todo
+                        }
+                    } else {
+                        // PAÍS
+                        if (coma != -1) {
+                            // País es desde la coma + 1 hasta el final
+                            return resto.substring(coma + 1);
+                        }
+                    }
+                }
+            }
+        }
+        return "";
+    }
 }

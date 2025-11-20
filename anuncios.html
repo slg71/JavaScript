@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anuncios</title>
-    <link rel="stylesheet" type="text/css" href="estilo.css">
-    <link rel="alternate stylesheet" type="text/css" href="noche.css" title="Noche">
+    <title>Anuncios - Práctica JS</title>
+    
+    <link rel="stylesheet" type="text/css" href="estilo.css" media="screen">
+    
+    <link rel="alternate stylesheet" type="text/css" href="noche.css" title="Noche" media="screen">
 </head>
 <body>
+
     <header>
         <h1>Mi Web</h1>
         <p>Práctica Optativa de JS</p>
@@ -43,37 +46,51 @@
             </section>
             
             <section id="lista-anuncios">
-                <article data-titulo="Portátil Gaming" data-precio="1000" data-fecha="2025-11-17" data-ciudad="Madrid" data-pais="España">
+                
+                <article class="anuncio">
                     <h3>Portátil Gaming</h3>
                     <p>Precio: 1000€</p>
-                    <p>Fecha: 17/11/2025</p>
+                    <p>Fecha: 2025-11-17</p>
                     <p>Ubicación: Madrid, España</p>
                 </article>
-                <article data-titulo="Bicicleta de Montaña" data-precio="350" data-fecha="2025-10-20" data-ciudad="Paris" data-pais="Francia">
+
+                <article class="anuncio">
                     <h3>Bicicleta de Montaña</h3>
                     <p>Precio: 350€</p>
-                    <p>Fecha: 20/10/2025</p>
+                    <p>Fecha: 2025-10-20</p>
                     <p>Ubicación: Paris, Francia</p>
                 </article>
-                <article data-titulo="Sofá 3 Plazas" data-precio="420" data-fecha="2025-09-15" data-ciudad="Alicante" data-pais="España">
+
+                <article class="anuncio">
                     <h3>Sofá 3 Plazas</h3>
                     <p>Precio: 420€</p>
-                    <p>Fecha: 15/09/2025</p>
+                    <p>Fecha: 2025-09-15</p>
                     <p>Ubicación: Alicante, España</p>
                 </article>
-                <article data-titulo="Mesa de Comedor" data-precio="150" data-fecha="2025-11-05" data-ciudad="Berlin" data-pais="Alemania">
+
+                <article class="anuncio">
                     <h3>Mesa de Comedor</h3>
                     <p>Precio: 150€</p>
-                    <p>Fecha: 05/11/2025</p>
+                    <p>Fecha: 2025-11-05</p>
                     <p>Ubicación: Berlin, Alemania</p>
                 </article>
+                
+                <article class="anuncio">
+                    <h3>Smartphone X</h3>
+                    <p>Precio: 800€</p>
+                    <p>Fecha: 2025-12-01</p>
+                    <p>Ubicación: Valencia, España</p>
+                </article>
+
             </section>
         </section>
     </main>
     
     <footer>
-        © Leigh Garett Grupo 3 de Prácticas | <a href="politica.html" style="color: white;">Política de cookies</a>
+        <p>© Leigh Garett - Grupo 3 de Prácticas</p>
+        <p><a href="politica.html">Política de cookies</a></p>
     </footer>
+
     <script src="codigo.js"></script>
 </body>
 </html>
