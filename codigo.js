@@ -26,7 +26,7 @@ function getCookie(c_name) {
 function cambiarEstilo(titulo) {
     var arrayLink = document.getElementsByTagName('link');
     for (var i = 0; i < arrayLink.length; i++) {
-        // Busamos links que sean stylesheets y no sean de impresión
+        // Buscamos links que sean stylesheets y no sean de impresión
         if (arrayLink[i].getAttribute('rel') != null && 
             arrayLink[i].getAttribute('rel').indexOf('stylesheet') != -1 && 
             arrayLink[i].getAttribute('media') != 'print') {
@@ -50,8 +50,8 @@ function cambiarEstilo(titulo) {
     }
 }
 
-/* --- 3. INICIALIZACIÓN (ONLOAD) --- */
-window.onload = function() {
+/* --- 3. INICIALIZACIÓN --- */
+window.addEventListener('load', function() {
     // 1. Recuperar estilo guardado si existe cookie
     var estilo = getCookie('estilo_seleccionado');
     if (estilo != "" && estilo != null) {
@@ -70,45 +70,57 @@ window.onload = function() {
     }
 
     // Selector de estilo
-    if (document.getElementById("selector-estilo")) {
-        document.getElementById("selector-estilo").onchange = function() {
+    var selectorEstilo = document.getElementById("selector-estilo");
+    if (selectorEstilo) {
+        selectorEstilo.addEventListener('change', function() {
             cambiarEstilo(this.value);
-        }
+        });
     }
     
     // Formulario Login
-    if (document.getElementById("form-login")) {
-        document.getElementById("form-login").onsubmit = function() {
-            return validarLogin();
-        }
+    var formLogin = document.getElementById("form-login");
+    if (formLogin) {
+        formLogin.addEventListener('submit', function(e) {
+            // Si la validación falla, prevenimos el envío del formulario
+            if (!validarLogin()) {
+                e.preventDefault();
+            }
+        });
     }
 
     // Formulario Registro
-    if (document.getElementById("form-registro")) {
-        document.getElementById("form-registro").onsubmit = function() {
-            return validarRegistro();
-        }
+    var formRegistro = document.getElementById("form-registro");
+    if (formRegistro) {
+        formRegistro.addEventListener('submit', function(e) {
+            if (!validarRegistro()) {
+                e.preventDefault();
+            }
+        });
     }
 
     // Ordenación de anuncios
-    if (document.getElementById("selector-orden")) {
-        document.getElementById("selector-orden").onchange = function() {
+    var selectorOrden = document.getElementById("selector-orden");
+    if (selectorOrden) {
+        selectorOrden.addEventListener('change', function() {
             ordenarAnunciosBurbuja();
-        }
+        });
     }
     
     // Página Política de Cookies: Botones para revertir decisión
-    if (document.getElementById("btn-revertir-aceptar")) {
-        document.getElementById("btn-revertir-aceptar").onclick = function() {
+    var btnRevAceptar = document.getElementById("btn-revertir-aceptar");
+    if (btnRevAceptar) {
+        btnRevAceptar.addEventListener('click', function() {
              gestionarConsentimiento('si');
-        }
+        });
     }
-    if (document.getElementById("btn-revertir-rechazar")) {
-        document.getElementById("btn-revertir-rechazar").onclick = function() {
+    
+    var btnRevRechazar = document.getElementById("btn-revertir-rechazar");
+    if (btnRevRechazar) {
+        btnRevRechazar.addEventListener('click', function() {
              gestionarConsentimiento('no');
-        }
+        });
     }
-};
+});
 
 /* --- 4. UI: BANNER Y AVISOS --- */
 function crearBannerCookies() {
@@ -123,18 +135,20 @@ function crearBannerCookies() {
     
     var btnAceptar = document.createElement("button");
     btnAceptar.appendChild(document.createTextNode("Aceptar"));
-    btnAceptar.onclick = function() {
+    // Uso de addEventListener en elemento creado dinámicamente
+    btnAceptar.addEventListener('click', function() {
         gestionarConsentimiento('si');
         document.body.removeChild(section);
-    };
+    });
     section.appendChild(btnAceptar);
 
     var btnRechazar = document.createElement("button");
     btnRechazar.appendChild(document.createTextNode("Rechazar"));
-    btnRechazar.onclick = function() {
+    // Uso de addEventListener en elemento creado dinámicamente
+    btnRechazar.addEventListener('click', function() {
         gestionarConsentimiento('no');
         document.body.removeChild(section);
-    };
+    });
     section.appendChild(btnRechazar);
     
     document.body.appendChild(section);
@@ -234,8 +248,6 @@ function validarRegistro() {
     var hayError = false;
 
     // 1. Usuario: Letras inglés y números. NO empezar por número. 3-15 chars
-    // ^[a-zA-Z] -> empieza por letra
-    // [a-zA-Z0-9]{2,14}$ -> siguen 2 a 14 caracteres (total 3-15)
     var regexUsu = /^[a-zA-Z][a-zA-Z0-9]{2,14}$/;
     if (!regexUsu.test(usu.value)) {
         mostrarError("usuario", "error-usuario", "Usuario inválido (3-15 car., debe empezar por letra).");
@@ -243,7 +255,6 @@ function validarRegistro() {
     }
 
     // 2. Contraseña: 6-15 chars, letras inglesas, numeros, - y _.
-    // Debe tener al menos 1 mayúscula, 1 minúscula y 1 número
     var p = pass.value;
     var longitudOk = p.length >= 6 && p.length <= 15;
     var caracteresOk = /^[a-zA-Z0-9\-_]+$/.test(p);
@@ -300,8 +311,6 @@ function validarRegistro() {
             // Validación de subdominios
             var subdominios = dominio.split(".");
             if (subdominios.length < 2 && dominio.indexOf(".") == -1) { 
-                // Se asume que debe haber al menos un punto en dominio
-                // El PDF dice "secuencia de uno o más subdominios separados por punto" ?????
                 mostrarError("email", "error-email", "El dominio debe contener al menos un punto y una extensión (ej: .com).");
                 hayError = true;
             }
@@ -358,11 +367,9 @@ function ordenarAnunciosBurbuja() {
             // Determinar si hay que intercambiar
             var intercambiar = false;
             
-            // Detectar si es orden ascendente o descendente
             if (criterio.indexOf("asc") != -1) {
                 if (valA > valB) intercambiar = true;
             } else {
-                // Descendente
                 if (valA < valB) intercambiar = true;
             }
             
@@ -374,7 +381,7 @@ function ordenarAnunciosBurbuja() {
         }
     }
     
-    // Reinsertar en el DOM nodo a nodo (appendChild mueve el elemento existente) 
+    // Reinsertar en el DOM nodo a nodo
     for(var k=0; k<lista.length; k++) {
         contenedor.appendChild(lista[k]);
     }
@@ -382,71 +389,51 @@ function ordenarAnunciosBurbuja() {
 
 /* Función auxiliar para extraer el dato del DOM según el criterio */
 function obtenerValorCriterio(nodo, criterio) {
-    // 1. PRECIO
     if (criterio.indexOf("precio") != -1) {
         var texto = nodo.textContent || nodo.innerText;
-        // Buscamos donde empiezan los dos puntos
         var inicio = texto.indexOf(":");
         if (inicio != -1) {
-            // Extraemos desde los dos puntos hasta el final
             var valorSucio = texto.substring(inicio + 1);
-            // parseInt detendrá la lectura al encontrar el símbolo € no numérico
             return parseInt(valorSucio); 
         }
         return 0;
     } 
-    // 2. TÍTULO
     else if (criterio.indexOf("titulo") != -1) {
         var h3 = nodo.getElementsByTagName("h3");
         if (h3.length > 0) {
-             // Convertimos a minúsculas para ordenar bien
             return h3[0].textContent.toLowerCase();
         }
         return "";
     }
-    // 3. FECHA, CIUDAD y PAÍS
     else {
         var parrafos = nodo.getElementsByTagName("p");
 
         for (var i = 0; i < parrafos.length; i++) {
             var pTexto = parrafos[i].textContent.toLowerCase();
-            // A) Caso FECHA
-            // Buscamos la palabra "fecha" usando indexOf
             if (criterio.indexOf("fecha") != -1 && pTexto.indexOf("fecha") != -1) {
                 var inicio = pTexto.indexOf(":");
                 if (inicio != -1) {
-                    // Extraemos la fecha
-                    // substring(inicio + 1) toma desde los dos puntos al final
                     var fechaTexto = pTexto.substring(inicio + 1);
-                    
-                    // Pasamos el string al constructor Date para poder comparar tiempos
                     var fechaObj = new Date(fechaTexto);
                     return fechaObj.getTime();
                 }
             }
 
-            // B) Caso UBICACIÓN (Ciudad o País)
-            // <p>Ubicación: Madrid, España</p>
             if ((criterio.indexOf("ciudad") != -1 || criterio.indexOf("pais") != -1) && pTexto.indexOf("ubicación") != -1) {
                 
                 var dosPuntos = pTexto.indexOf(":");
                 if (dosPuntos != -1) {
-                    // Obtenemos " madrid, españa"
                     var resto = pTexto.substring(dosPuntos + 1);
-                    // Buscamos la coma separadora como con las cookies
                     var coma = resto.indexOf(",");
                     
                     if (criterio.indexOf("ciudad") != -1) {
                         if (coma != -1) {
-                            // Ciudad es desde el inicio hasta la coma
                             return resto.substring(0, coma);
                         } else {
-                            return resto; // Si no hay coma, devolvemos todo
+                            return resto; 
                         }
                     } else {
-                        // PAÍS
                         if (coma != -1) {
-                            // País es desde la coma + 1 hasta el final
                             return resto.substring(coma + 1);
                         }
                     }
